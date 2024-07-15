@@ -1,0 +1,29 @@
+编辑Containerd的配置文件 /etc/containerd/config.toml， 在 [plugins."io.containerd.grpc.v1.cri".registry] 下方添加 config_path
+
+    [plugins."io.containerd.grpc.v1.cri".registry]
+      config_path = "/etc/containerd/certs.d"
+
+创建目录 /etc/containerd/certs.d/docker.io，在其中添加包含下面内容的 hosts.toml 文件
+server = "https://docker.io" # 源镜像地址
+[host."https://xxxxxx.mirror.aliyuncs.com"] # 镜像加速地址
+
+
+重启 Containerd
+systemctl restart containerd
+
+
+案例
+$ tree /etc/containerd/certs.d
+/etc/containerd/certs.d/
+├── docker.io
+│   └── hosts.toml
+└── quay.io
+    └── hosts.toml
+
+$ cat /etc/containerd/certs.d/docker.io/hosts.toml
+server = "https://docker.io"
+[host."https://prh13f1a.mirror.aliyuncs.com"]
+
+$ cat /etc/containerd/certs.d/quay.io/hosts.toml
+server = "https://quay.io"
+[host."https://quay.mirrors.ustc.edu.cn"]
